@@ -60,7 +60,6 @@ function install_databases() {
   systemctl restart postgresql
   systemctl enable postgresql
 
-
 }
 
 function install_webserver() {
@@ -69,9 +68,9 @@ function install_webserver() {
 
 function configure_rvm() {
   adduser chatwoot
-
+  curl -sSL https://rvm.io/mpapis.asc | sudo gpg2 --import -
+  curl -sSL https://rvm.io/pkuczynski.asc | sudo gpg2 --import -
   curl -sSL https://get.rvm.io | bash -s stable
-  source /usr/local/rvm/scripts/rvm
   usermod -aG rvm chatwoot
 }
 
@@ -88,6 +87,9 @@ function configure_db() {
   \c template1
   VACUUM FREEZE;
 EOF
+
+  systemctl enable redis-server.service
+  systemctl enable postgresql
 
 }
 
@@ -148,10 +150,9 @@ function setup_ssl() {
   echo "debug: letsencrypt email: $le_email"
   curl https://ssl-config.mozilla.org/ffdhe4096.txt >> /etc/ssl/dhparam
   wget https://raw.githubusercontent.com/chatwoot/chatwoot/develop/deployment/nginx_chatwoot.conf
-  cp nginx_chatwoot.conf /etc/nginx/sites-available/nginx_chatwoot.conf
+  cp nginx_chatwoot.conf /etc/nginx/conf.d/nginx_chatwoot.conf
   certbot certonly --non-interactive --agree-tos --nginx -m "$le_email" -d "$domain_name"
-  sed -i "s/chatwoot.domain.com/$domain_name/g" /etc/nginx/sites-available/nginx_chatwoot.conf
-  ln -s /etc/nginx/sites-available/nginx_chatwoot.conf /etc/nginx/sites-enabled/nginx_chatwoot.conf
+  sed -i "s/chatwoot.domain.com/$domain_name/g" /etc/nginx/conf.d/nginx_chatwoot.conf
   systemctl restart nginx
   sudo -i -u chatwoot << EOF
   cd chatwoot
