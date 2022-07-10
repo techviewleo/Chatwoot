@@ -53,13 +53,11 @@ function install_dependencies() {
 
 function install_databases() {
   yum install -y postgresql-server redis
-  systemctl enable --now redis
+  systemctl start redis
   postgresql-setup --initdb
   systemctl start postgresql
   sed -i -e 's/ident/md5/' /var/lib/pgsql/data/pg_hba.conf
   systemctl restart postgresql
-  systemctl enable postgresql
-
 }
 
 function install_webserver() {
@@ -88,7 +86,7 @@ function configure_db() {
   VACUUM FREEZE;
 EOF
 
-  systemctl enable redis-server.service
+  systemctl enable redis
   systemctl enable postgresql
 
 }
