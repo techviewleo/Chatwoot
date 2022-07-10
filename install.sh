@@ -52,7 +52,7 @@ function install_dependencies() {
 }
 
 function install_databases() {
-  yum install -y postgresql-server redis
+  yum install -y postgresql-server postgresql-contrib redis
   systemctl start redis
   postgresql-setup --initdb
   systemctl start postgresql
