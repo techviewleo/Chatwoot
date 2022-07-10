@@ -46,13 +46,14 @@ EOF
 function install_dependencies() {
   yum install -y curl
   curl -sL https://rpm.nodesource.com/setup_16.x | sudo -E bash -
-curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
+  curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yum.repos.d/yarn.repo
   rpm --import https://dl.yarnpkg.com/rpm/pubkey.gpg
   yum install nodejs yarn -y
 }
 
 function install_databases() {
-  yum install -y postgresql redis
+  yum module enable postgresql:13 -y
+  yum install -y postgresql-server redis
   systemctl enable --now redis
   postgresql-setup --initdb
   systemctl start postgresql
@@ -73,7 +74,7 @@ function configure_rvm() {
   gpg --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
   gpg2 --keyserver hkp://keyserver.ubuntu.com --recv-keys 409B6B1796C275462A1703113804BB82D39DC0E3 7D2BAF1CF37B13E2069D6956105BD0E739499BDB
   curl -sSL https://get.rvm.io | bash -s stable
-   usermod -aG rvm chatwoot
+  usermod -aG rvm chatwoot
 }
 
 function configure_db() {
