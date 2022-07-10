@@ -52,7 +52,6 @@ function install_dependencies() {
 }
 
 function install_databases() {
-  yum module enable postgresql:13 -y
   yum install -y postgresql-server redis
   systemctl enable --now redis
   postgresql-setup --initdb
