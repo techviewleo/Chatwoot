@@ -52,7 +52,7 @@ curl --silent --location https://dl.yarnpkg.com/rpm/yarn.repo | sudo tee /etc/yu
 }
 
 function install_databases() {
-  yum install -y postgresql postgresql-contrib redis
+  yum install -y postgresql redis
 }
 
 function install_webserver() {
@@ -84,7 +84,8 @@ EOF
 
   systemctl enable --now redis
   postgresql-setup --initdb
-  systemctl enable --now postgresql
+  systemctl start postgresql
+  systemctl enable postgresql
 
 }
 
